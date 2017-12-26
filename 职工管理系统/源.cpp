@@ -63,8 +63,6 @@ void add_employee() {
 		//清屏
 		system("cls");
 
-		//声明节点
-		LinkedList node;
 		//声明数据
 		Employee emp;
 		
@@ -79,17 +77,65 @@ void add_employee() {
 		cin >> emp.bonus;
 		gotoxy(32, 2);
 		cin >> emp.deduct_money;
-		//结束录入
+		//结束录入，判断提交
 		cout << "是否提交数据？y/n\n";
 		int c = _getch();
+		if (c == 'n') {
+			cout << "是否再次提交？y/n\n";
+			c = _getch();
+			if (c == 'y')
+				continue;
+			else
+				break;
+		}
+		if (c == 'y') {
+			//确认要提交
+			//排重
+			int flag = 0;
+			LinkedList *link = root->next;
+			while (1) {
+				if (link == NULL) {
+					break;
+				}
+				if (link->emp.num == emp.num||strcmp(link->emp.name, emp.name) == 0) {
+					cout << "列表中已经存在该员工，此条数据无效！" << endl;
+					flag = 1;
+					break;
+				}
+				link = link->next;
+			}
+			//声明节点
+			LinkedList *node;
+			node = INIT;
+			node->emp = emp;//数据域连接
+			node->next = NULL;//指针域初始化
 
-
+			//连接
+			if (emp_count < 1) {
+				root->next = node;//连接根节点
+			}
+			else {
+				last->next = node;
+			}
+			last = node;//设置尾节点
+		}
+		else {
+			cout << "错误！请再次录入。\n";
+			break;
+		}
+		emp_count++;
+		//再次输入
+		cout << "是否录入下一个员工？y/n\n";
+		c = _getch();
+		if (c == 'n')
+			break;
 	}
 }
 
 //删除
 void delete_employee() {
-
+	system("cls");
+	cout << "请输入名字或者编号";
 }
 
 //修改
@@ -124,16 +170,15 @@ void show() {
 	}
 	else {
 		cout << "\t编号      \t姓名    \t基础工资  \t奖金\t扣款    " << endl;
-		LinkedList link = *root;
+		LinkedList *link = root->next;
 		while (1) {
-			printf_s("%10d            %s      %8d  \t%10d  %5d\n", link.emp.num, link.emp.name, link.emp.base_money, link.emp.bonus, link.emp.deduct_money);
-			if (link.hasNext==0) {
+			if (link == NULL) {
 				break;
 			}
-			link = *link.next;
+			printf_s("%10d            %s      %8d  \t%10d  %5d\n", link->emp.num, link->emp.name, link->emp.base_money, link->emp.bonus, link->emp.deduct_money);
+			link = link->next;
 		}
 	}
-	
 }
 
 
